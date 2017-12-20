@@ -4,8 +4,8 @@ class MasterMind < Gosu::Window
 	def initialize(width,height,bool=false)
 		super(width,height,bool)
 		self.caption= "Contador em Gosu"
-		@color_hex = {red: 0xffff0000, orange: 0xffff7f00, yellow: 0xffffff00, green: 0xff00ff00, blue: 0xff0000ff, purple: 0xff7f00ff, pink: 0xffff7fff, grey: 0xff7f7f7f}
-		@colors = @color_hex.keys[0..-2]
+		@color_hex = {red: 0xffff0000, orange: 0xffff7f00, yellow: 0xffffff00, green: 0xff00ff00, blue: 0xff0000ff, purple: 0xff7f00ff, pink: 0xffff7fff, grey: 0xff7f7f7f, black: 0xff000000}
+		@colors = @color_hex.keys[0..-3]
 		@buttons, @info_pins,@color_pins, = [], [], []
 		bt_hght, sq_hght = 40, 60
 		@colors.each_with_index do |color,idx|
@@ -17,16 +17,15 @@ class MasterMind < Gosu::Window
 		@buttons<<GosuButton.new(self,[10,height-bt_hght],[width/6,bt_hght-3],"Quit",lambda{|window| exit},nil,0xffffffff,0xff000000)
 		(10*4).times do |i|
 			x, y= i % 4, 9 - i / 4
-			@color_pins<<GosuLabel.new(self,[width*2/6+width*x/6,(height*0.15).to_i+(height*0.8/10).to_i*y],[width/6-1,(height*0.8/10).to_i-1],"",true,1<<8,0x0)
+			@color_pins<<GosuLabel.new(self,[width*2/6+width*x/6,(height*0.05).to_i+(height*0.9/10).to_i*y],[width/6-1,(height*0.8/10).to_i-1],"",true,1<<8,0x0)
 		end
 		(10).times do |i|
 			y = 9 - i
-			@info_pins<<GosuLabel.new(self,[width*1.2/6,(height*0.15).to_i+((height*0.8/40)+(height*0.8/10)*y).to_i],[width*0.8/6,(height*0.8/20).to_i-1],"",true,1<<8,0x0, 0xff000000)
+			@info_pins<<GosuLabel.new(self,[width*1.2/6,(height*0.05).to_i+((height*0.9/40)+(height*0.9/10)*y).to_i],[width*0.8/6,(height*0.8/20).to_i-1],"",true,1<<8,0x0, 0xff000000)
 		end
-		@drawables = [@buttons,@info_pins,@color_pins]
-		@guesses = []
-		@password = randomPassword()
-		clear_line()
+		@end_label = GosuLabel.new(self,[width/2-width/12,height/2-height/20],[width/6,height/10],"",true,1<<8,0x0,0x0)
+		@drawables = [@buttons,@info_pins,@color_pins,@end_label]
+		reinit
 	end
 	def reinit
 		@color_pins.each{|cp| cp.background=0x0}
@@ -34,6 +33,9 @@ class MasterMind < Gosu::Window
 		@guesses = []
 		@password = randomPassword()
 		clear_line()
+		@state = :playing
+		@end_label.background=0x0
+		@end_label.text=""
 	end
 	def randomPassword
 		pass = []
@@ -61,19 +63,21 @@ class MasterMind < Gosu::Window
 		false
 	end
 	def selected color
-		guess = @passwordGuess.dup
-		guess[@currentIdx]=color
-		if guess == guess.uniq
-			@passwordGuess = guess
-			@color_pins[@currentIdx+4*@guesses.size].background = @color_hex[color]
-			@currentIdx = (@currentIdx + 1) % 4
+		if @state == :playing 
+			guess = @passwordGuess.dup
+			guess[@currentIdx]=color
+			if guess == guess.uniq
+				@passwordGuess = guess
+				@color_pins[@currentIdx+4*@guesses.size].background = @color_hex[color]
+				@currentIdx = (@currentIdx + 1) % 4
+			end
 		end
 	end
-	def clear_line
+	def clear_line 
 		@black_pins, @white_pins = 0, 0
 		@currentIdx=0
 		@passwordGuess=[""]
-		4.times{|i| @color_pins[i+4*@guesses.size].background = 0x0}
+		4.times{|i| @color_pins[i+4*@guesses.size].background = 0x0} if @state != :stopped
 	end
 	def give_answer
 		@black_pins = @passwordGuess.count{|v| i = @passwordGuess.index(v); v == @password[i]}
@@ -81,9 +85,21 @@ class MasterMind < Gosu::Window
 		return "!#{@black_pins} ?#{@white_pins}"
 	end
 	def submit
-		if @passwordGuess.size == 4
+		if @state == :playing and @passwordGuess.size == 4
 			@info_pins[@guesses.size].text = give_answer()
 			@guesses << @passwordGuess
+			if (@black_pins==4)
+				@state = :stopped 
+				@end_label.background=@color_hex[:black]
+				@end_label.fontcolor=@color_hex[:green]
+				@end_label.text="WIN!"
+			end
+			if (@black_pins<4 and @guesses.size==10)
+				@state = :stopped 
+				@end_label.background=@color_hex[:black]
+				@end_label.fontcolor=@color_hex[:red]
+				@end_label.text="LOSE!"
+			end
 			clear_line()
 		end
 	end

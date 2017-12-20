@@ -3,7 +3,7 @@ require_relative 'GosuGUI'
 class MasterMind < Gosu::Window
 	def initialize(width,height,bool=false)
 		super(width,height,bool)
-		self.caption= "Contador em Gosu"
+		self.caption= "MasterMind Senha. - Adap. Hasbro"
 		@color_hex = {red: 0xffff0000, orange: 0xffff7f00, yellow: 0xffffff00, green: 0xff00ff00, blue: 0xff0000ff, purple: 0xff7f00ff, pink: 0xffff7fff, grey: 0xff7f7f7f, black: 0xff000000}
 		@colors = @color_hex.keys[0..-3]
 		@buttons, @info_pins,@color_pins, = [], [], []

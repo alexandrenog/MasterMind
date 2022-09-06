@@ -11,17 +11,17 @@ class MasterMind < Gosu::Window
 		@colors.each_with_index do |color,idx|
 			@buttons<<GosuButton.new(self,[10+(width/12)*(idx%2),30+sq_hght*(idx/2)],[width/12-3,sq_hght-3],(idx+1).to_s.capitalize,lambda{|window| window.selected(color)},nil,@color_hex[color],0xff000000)
 		end
-		@buttons<<GosuButton.new(self,[10,height-bt_hght*4],[width/6,bt_hght-3],"Submit",lambda{|window| window.submit},nil,0xffffffff,0xff000000)
-		@buttons<<GosuButton.new(self,[10,height-bt_hght*3],[width/6,bt_hght-3],"Clear",lambda{|window| window.clear_line},nil,0xffffffff,0xff000000)
-		@buttons<<GosuButton.new(self,[10,height-bt_hght*2],[width/6,bt_hght-3],"Restart",lambda{|window| window.reinit},nil,0xffffffff,0xff000000)
-		@buttons<<GosuButton.new(self,[10,height-bt_hght],[width/6,bt_hght-3],"Quit",lambda{|window| exit},nil,0xffffffff,0xff000000)
+		@buttons << GosuButton.new(self,[10,height-bt_hght*4],[width/6,bt_hght-3],"Submit",lambda{|window| window.submit},nil,0xffffffff,0xff000000)
+		@buttons << GosuButton.new(self,[10,height-bt_hght*3],[width/6,bt_hght-3],"Clear",lambda{|window| window.clear_line},nil,0xffffffff,0xff000000)
+		@buttons << GosuButton.new(self,[10,height-bt_hght*2],[width/6,bt_hght-3],"Restart",lambda{|window| window.reinit},nil,0xffffffff,0xff000000)
+		@buttons << GosuButton.new(self,[10,height-bt_hght],[width/6,bt_hght-3],"Quit",lambda{|window| exit},nil,0xffffffff,0xff000000)
 		(10*4).times do |i|
 			x, y= i % 4, 9 - i / 4
-			@color_pins<<GosuLabel.new(self,[width*2/6+width*x/6,(height*0.05).to_i+(height*0.9/10).to_i*y],[width/6-1,(height*0.8/10).to_i-1],"",true,1<<8,0x0)
+			@color_pins << GosuLabel.new(self,[width*2/6+width*x/6,(height*0.05).to_i+(height*0.9/10).to_i*y],[width/6-1,(height*0.8/10).to_i-1],"",true,1<<8,0x0)
 		end
 		(10).times do |i|
 			y = 9 - i
-			@info_pins<<GosuLabel.new(self,[width*1.2/6,(height*0.05).to_i+((height*0.9/40)+(height*0.9/10)*y).to_i],[width*0.8/6,(height*0.8/20).to_i-1],"",true,1<<8,0x0, 0xff000000)
+			@info_pins << GosuLabel.new(self,[width*1.2/6,(height*0.05).to_i+((height*0.9/40)+(height*0.9/10)*y).to_i],[width*0.8/6,(height*0.8/20).to_i-1],"",true,1<<8,0x0, 0xff000000)
 		end
 		@end_label = GosuLabel.new(self,[width/2-width/12,height/2-height/20],[width/6,height/10],"",true,1<<8,0x0,0x0)
 		@drawables = [@buttons,@info_pins,@color_pins,@end_label]
@@ -40,7 +40,7 @@ class MasterMind < Gosu::Window
 	def randomPassword
 		pass = []
 		while pass.size < 4
-			pass<<@colors.sample
+			pass << @colors.sample
 			pass.uniq!
 		end
 		return pass

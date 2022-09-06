@@ -9,7 +9,7 @@ class MasterMind < Gosu::Window
 		@buttons, @info_pins,@color_pins, = [], [], []
 		bt_hght, sq_hght = 40, 60
 		@colors.each_with_index do |color,idx|
-			@buttons<<GosuButton.new(self,[10+(width/12)*(idx%2),30+sq_hght*(idx/2)],[width/12-3,sq_hght-3],(idx+1).to_s.capitalize,lambda{|window| window.selected(color)},nil,@color_hex[color],0xff000000)
+			@buttons << GosuButton.new(self,[10+(width/12)*(idx%2),30+sq_hght*(idx/2)],[width/12-3,sq_hght-3],(idx+1).to_s.capitalize,lambda{|window| window.selected(color)},nil,@color_hex[color],0xff000000)
 		end
 		@buttons << GosuButton.new(self,[10,height-bt_hght*4],[width/6,bt_hght-3],"Submit",lambda{|window| window.submit},nil,0xffffffff,0xff000000)
 		@buttons << GosuButton.new(self,[10,height-bt_hght*3],[width/6,bt_hght-3],"Clear",lambda{|window| window.clear_line},nil,0xffffffff,0xff000000)
